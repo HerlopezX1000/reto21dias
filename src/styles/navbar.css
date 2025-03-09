@@ -1,10 +1,22 @@
 @import './Globales.css';
 
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
     background-color: var(--fondo);
-    
-    padding: 1rem;
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgb(0, 0, 0);
+    transition: padding 0.3s ease, background-color 0.3s ease;
+
+
 }
+.navbar.scrolled {
+    padding: 2rem 0; /* Reduce el tamaño al hacer scroll */
+    background-color: rgb(206, 14, 104); /* Verde semi-opaco */
+  }
+
 
 .navbar .contenedor {
     display: flex;
@@ -25,22 +37,28 @@
     padding: 0;
 }
 
-.navbar-menu li {
+.navbar .navbar-menu li a {
     margin: 0 2rem;
-    color: var(--lima) !important;
+    color: var(--blanco) !important;
     font-size: 1.8rem;
+    font-family: var(--fuente-titulos);
+    transition: 0.5s ease;
     
 
 }
-
+.navbar .navbar-menu li a:hover {
+    color: var(--verde) !important;
+}
 .navbar-social {
     display: flex;
     align-items: center; /* Alinea verticalmente los iconos */
 }
 
 .navbar-social a {
-    margin-left: 1rem;
+    margin: 0 1.5rem;
     font-size: 1.5rem;
+    color: var(--blanco);
+    font-size: 1.8rem;
 }
 
 .navbar-toggle {
@@ -66,9 +84,10 @@
         position: fixed;
         top: 60px;
         right: 0;
-        background-color: #f8f8f8;
+        background-color: var(--fondo);
         width: 200px;
         padding: 1rem;
+        box-shadow: -2px 0 5px rgba(176, 219, 127, 0.384)
     }
 
     .navbar-menu.active {
@@ -84,5 +103,6 @@
         display: block;
         width: 100%; /* Ocupa todo el ancho en móviles */
         text-align: right; /* Alinea a la derecha el icono */
+        color: var(--naranja);
     }
 }
