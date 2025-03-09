@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/*============variables============*/
+
+:root {
+  --fondo: #29372b;
+  --lima: #dee7a6;
+  --verde: #adca8b;
+  --naranja: #f07d00;
+  --blanco: #f8f8f8;
+  --negro: #1c1c1c;
+  --gris: #e0e7d9;
+
+}
+
+
+/*===============globales==============*/
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+  scroll-padding-top: 0rem;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: var(--fuente-textos);
+  font-optical-sizing: auto;
+  font-style: normal;
+  color: var(--negro);
+}
+
+p {
+  font-size: 1.7rem;
+  color: var(--negro);
+  line-height: 1.5;
+}
+
+.contenedor {
+  width: 95%;
+  max-width: 120rem;
+  margin: 0 auto;
+}
+
+a {
+  text-decoration: none;
+}
+
+h1, h2, h3 {
+  margin: 0 0 5rem 0;
+  font-weight: 900;
+  font-family: var(--fuente-titulos);
+  letter-spacing: 0.3rem; 
+}
+
+h1 {
+  font-size: 4rem;
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+h2 {
+  font-size: 3rem;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+}
+
+
+
+
+
+
+
+
+/* Estilos globales y para el Navbar (ejemplo) */
+.navbar {
+  background-color: #f8f8f8;
+  padding: 1rem 0;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  /* Estilos para el logo */
+}
+
+.navbar-menu {
+  list-style: none;
+  display: flex;
+}
+
+.navbar-menu li {
+  margin-left: 1rem;
+}
+
+.navbar-social {
+  display: flex;
+}
+
+.navbar-social a {
+  margin-left: 1rem;
+}
+
+.logo {
+  height: 40px;
+}
+
+.contenedor {
+  width: 95%;
+  max-width: 120rem;
+  margin: 0 auto;
+}
+
+.video-section {
+  text-align: center;
+  padding: 2rem;
+}
+
+.video-section iframe {
+  /* Estilos para el video */
+  max-width: 100%;
+}

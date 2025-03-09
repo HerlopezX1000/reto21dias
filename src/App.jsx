@@ -1,17 +1,22 @@
 import React from 'react';
-    import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-    import Navbar from './components/Navbar';
+    import Hero from './sections/Hero';
     import Video from './sections/Video';
+    import Testimonials from './sections/Testimonials';
+    import Information from './sections/Information';
+    import Inscription from './sections/Inscription';
+    import Footer from './sections/Footer';
+    import Slider from "./components/Slider";
 
     function App() {
         return (
-            <Router>
-                <Navbar />
-                <Routes>
-                    <Route path="/video" element={<Video />} />
-                    {/* Agrega más rutas aquí */}
-                </Routes>
-            </Router>
+            <div>
+                <Hero />
+                <Video id="video" />
+                <Testimonials id="testimonials" />
+                <Information id="information" />
+                <Inscription id="inscription" />
+                <Footer />
+            </div>
         );
     }
 
