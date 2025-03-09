@@ -1,16 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import '../styles/navbar.css';
 
-    function Navbar() {
-        return (
-            <nav className="navbar">
-                <div className="navbar-menu">
-                    <a href="#video">Video</a>
-                    <a href="#testimonials">Testimonios</a>
-                    <a href="#information">Información</a>
-                    <a href="#inscription">Inscripción</a>
-                </div>
-            </nav>
-        );
-    }
+function Navbar() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    export default Navbar;
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
+    return (
+        <nav className="navbar">
+            <div className="navbar-logo">
+                <img src="/logo.png" alt="Logo" className="logo" />
+            </div>
+            <ul className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
+                <li><Link to="/">Inicio</Link></li>
+                <li><Link to="/video">Video</Link></li>
+                <li><Link to="/testimonials">Testimonios</Link></li>
+                <li><Link to="/information">Información</Link></li>
+            </ul>
+            <div className="navbar-social">
+                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                    <i className="fab fa-facebook"></i>
+                </a>
+                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                    <i className="fab fa-instagram"></i>
+                </a>
+                <a href="https://wa.me/tunumerodewhatsapp" target="_blank" rel="noopener noreferrer">
+                    <i className="fab fa-whatsapp"></i>
+                </a>
+            </div>
+            <div className="navbar-toggle" onClick={toggleMenu}>
+                <i className="fas fa-bars"></i>
+            </div>
+        </nav>
+    );
+}
+
+export default Navbar;

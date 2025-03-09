@@ -1,0 +1,63 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.navbar-logo img {
+    height: 40px;
+}
+
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-menu li {
+    margin-left: 1rem;
+}
+
+.navbar-social {
+    display: flex;
+}
+
+.navbar-social a {
+    margin-left: 1rem;
+    font-size: 1.5rem;
+}
+
+.navbar-toggle {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Estilos para móviles */
+@media (max-width: 768px) {
+    .navbar-menu {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 60px; /* Ajusta según la altura de tu Navbar */
+        right: 0;
+        background-color: #f8f8f8;
+        width: 200px;
+        padding: 1rem;
+    }
+
+    .navbar-menu.active {
+        display: flex;
+    }
+
+    .navbar-menu li {
+        margin: 0;
+        padding: 0.5rem 0;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+}

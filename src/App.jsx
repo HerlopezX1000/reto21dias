@@ -9,6 +9,7 @@ import React from 'react';
 
     function App() {
         return (
+            
             <div>
                 <Hero />
                 <Video id="video" />

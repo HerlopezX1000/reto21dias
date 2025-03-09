@@ -1,5 +1,6 @@
 import React from 'react';
     import MotivacionalVideo from '../components/MotivacionalVideo';
+    import '../styles/Video.css';
 
     function Video() {
         return (

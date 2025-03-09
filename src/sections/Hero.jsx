@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Slider from '../components/Slider'; // Importa Slider aquí
+import '../styles/Hero.css';
 
 function Hero() {
     return (
