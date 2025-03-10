@@ -1,0 +1,34 @@
+.slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.slider img {
+    width: 100%;
+    height: auto;
+    transition: opacity 0.5s ease-in-out; /* Agrega la transición */
+}
+
+.slider img.fade-out {
+    opacity: 0; /* Agrega la clase para el fade-out */
+}
+
+.slider button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.slider-prev {
+    left: 10px;
+}
+
+.slider-next {
+    right: 10px;
+}

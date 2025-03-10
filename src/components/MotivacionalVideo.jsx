@@ -5,7 +5,7 @@ function MotivacionalVideo() {
         <iframe
             width="560"
             height="315"
-            src="https://www.youtube.com/embed/TU_ID_DEL_VIDEO"
+            src="https://youtu.be/G4jSVowf000?si=G7cbHu7dwPm1Ir1m"
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

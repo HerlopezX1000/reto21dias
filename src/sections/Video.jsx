@@ -1,14 +1,22 @@
 import React from 'react';
-    import MotivacionalVideo from '../components/MotivacionalVideo';
-    import '../styles/Video.css';
+    import '../styles/Video.css'; // Importa el archivo CSS
 
     function Video() {
         return (
-            <div className="contenedor video-section">
-                <h2>Video Motivacional</h2>
-                <MotivacionalVideo />
-                <p>Una breve descripción del video.</p>
-            </div>
+            <section id="video" className="video-section">
+                <h2>Video Promocional</h2>
+                <div className="video-container">
+                    <iframe
+                        width="800"
+                        height="400"
+                        src="https://www.youtube.com/embed/M8VaCkkpdDk?si=UVUKTJglsF9-QemF&amp" // Reemplaza con tu ID
+                        title="Video Promocional"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                    ></iframe>
+                </div>
+            </section>
         );
     }
 
