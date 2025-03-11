@@ -1,0 +1,52 @@
+
+.information {
+    background-color: var(--verde);
+}
+
+.information .contenedor {
+    background-color: var(--blanco);
+    padding: 1rem;
+
+}
+
+.contenedor h2 {
+    text-align: center;
+    padding-top: 3rem;
+    
+}
+
+.contenedor .retos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}   
+
+.retos .reto {
+    padding: 1rem;
+    border: 1px solid var(--lima);
+    border-radius: 0.5rem;
+    
+    
+}
+.reto img {
+    border-radius: 0.5rem;
+}
+
+.reto p {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.reto button {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    cursor: pointer;
+    background-color: var(--naranja);
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    color: var(--lima);
+    
+}

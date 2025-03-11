@@ -13,8 +13,9 @@ function App() {
             <Navbar /> 
             <Hero /> 
             <Video id="video" />
-            <Testimonials id="testimonials" />
+           
             <Information id="information" />
+            <Testimonials id="testimonials" />
             <Inscription id="inscription" />
             <Footer />
         </div>

@@ -1,6 +1,7 @@
 .video-section {
     text-align: center;
     padding: 2rem;
+    background-color: var(--lima);
 }
 
 .video-container {

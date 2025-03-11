@@ -63,6 +63,7 @@ h1, h2, h3 {
   font-weight: 900;
   font-family: var(--fuente-titulos);
   letter-spacing: 0.3rem; 
+  color: var(--fondo);
 }
 
 h1 {

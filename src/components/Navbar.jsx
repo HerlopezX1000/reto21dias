@@ -30,7 +30,7 @@ import React, { useState } from 'react';
                         <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-instagram"></i>
                         </a>
-                        <a href="https://wa.me/tunumerodewhatsapp" target="_blank" rel="noopener noreferrer">
+                        <a href="https://wa.me/+573219777717" target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-whatsapp"></i>
                         </a>
                     </div>
