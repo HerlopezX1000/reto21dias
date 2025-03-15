@@ -9,30 +9,31 @@ import React, { useState } from 'react';
             setIsMenuOpen(!isMenuOpen);
         };
 
+        const closeMenu = () => {
+            setIsMenuOpen(false);
+        };
+
         return (
             <nav className="navbar">
 
                 <div className="contenedor">
                     <div className="navbar-logo">
-                        <img src="/logo.png" alt="Logo" className="logo" />
+                        <img src="/logo.png" alt="Logo Veterinaria Zona Animal" className="logo" />
                     </div>
                     <ul className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
-                        <li><Link to="/">Inicio</Link></li>
-                        <li><Link to="/video">Video</Link></li>
-                        <li><Link to="/testimonials">Testimonios</Link></li>
-                        <li><Link to="/information">Información</Link></li>
-                        <li><Link to="/inscription">Inscripción</Link></li>
+                        <li><a href="#" onClick={closeMenu}>Inicio</a></li>
+                        <li><a href="#video" onClick={closeMenu}>Video</a></li>
+                        <li><a href="#information" onClick={closeMenu}>Retos</a></li>    
+                        <li><a href="#testimonials"onClick={closeMenu}>Testimonios</a></li>                       
+                        <li><a href="#formulario" onClick={closeMenu}>Inscripción</a></li>
                     </ul>
                     <div className="navbar-social">
-                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-                            <i className="fab fa-facebook"></i>
-                        </a>
-                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-                            <i className="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://wa.me/+573219777717" target="_blank" rel="noopener noreferrer">
-                            <i className="fab fa-whatsapp"></i>
-                        </a>
+
+                    <Link to="#" >
+                         <button>Inicia Sesión</button>
+                     </Link>
+                       
+                        
                     </div>
                     <div className="navbar-toggle" onClick={toggleMenu}>
                         <i className="fas fa-bars"></i>

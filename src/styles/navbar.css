@@ -42,12 +42,16 @@
     color: var(--blanco) !important;
     font-size: 1.8rem;
     font-family: var(--fuente-titulos);
-    transition: 0.5s ease;
+    transition: 0.3s ease;
     
 
 }
 .navbar .navbar-menu li a:hover {
-    color: var(--verde) !important;
+    color: var(--fondo) !important;
+    background-color: var(--naranja);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    
 }
 .navbar-social {
     display: flex;
@@ -65,7 +69,23 @@
     font-size: 1.5rem;
     cursor: pointer;
 }
+.navbar-social button{
+    background-color: var(--naranja);
+    border: none;
+    color: var(--blanco);
+    cursor: pointer;
+    padding: 0.7rem 2rem;
+    font-family: var(--fuente-titulos);
+    font-size: 1.7rem;
+    border-radius: 0.5rem;
+    box-shadow: 1px 5px rgba(0, 0, 0, 0.3);
+    transition: 0.5s ease;
+}
 
+.navbar-social button:hover {
+    background-color: var(--lima);
+    color: var(--negro);
+}
 /* Estilos para móviles */
 @media (max-width: 768px) {
     .navbar {
@@ -86,7 +106,7 @@
         background-color: var(--fondo);
         width: 200px;
         padding: 1rem;
-        box-shadow: -2px 0 5px rgba(176, 219, 127, 0.384)
+        box-shadow: -2px 0 5px rgba(221, 233, 207, 0.384)
     }
 
     .navbar-menu.active {
