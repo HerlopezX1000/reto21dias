@@ -4,7 +4,7 @@ import React, { useState } from 'react';
     function Testimonials() {
         // Array de videos de ejemplo
         const videos = [
-            { id: 'jp00Xpzw648', title: 'Testimonio 1' },
+            { id: 'vJyXg7EASNo', title: 'Testimonio 1' },
             { id: 'tVtnIf-8w4c', title: 'Testimonio 2' },
             { id: 'gNnq3MLSSsA', title: 'Testimonio 3' },
             
