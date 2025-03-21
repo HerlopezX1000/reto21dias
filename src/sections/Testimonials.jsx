@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 
         return (
             <section id="testimonials" className="testimonials-section">
-                <h2>Testimonios hola</h2>
+                <h2>Nuestros Clientes lo Confirman</h2>
                 <div className="testimonials-container">
                     <div className="video-player">
                         <iframe

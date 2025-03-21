@@ -4,12 +4,12 @@ import React from 'react';
     function Video() {
         return (
             <section id="video" className="video-section">
-                <h2>Video Promocional</h2>
+               
                 <div className="video-container">
                     <iframe
                         width="800"
                         height="400"
-                        src="https://www.youtube.com/embed/M8VaCkkpdDk?si=UVUKTJglsF9-QemF&amp" // Reemplaza con tu ID
+                        src="https://www.youtube.com/embed/iW7Cq_NARGw?si=jg5YKtHVjcxj9f43" // Reemplaza con tu ID
                         title="Video Promocional"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

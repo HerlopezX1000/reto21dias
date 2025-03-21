@@ -55,6 +55,7 @@ import React, { useState } from 'react';
                                     <i className="fab fa-whatsapp"></i>
                                 </a>
                          </div>
+                         <img src="../../formulario.jpg" alt="imagen en el formulario" />
                     
                 </div>
                 <form onSubmit={handleSubmit}>
@@ -134,10 +135,10 @@ import React, { useState } from 'react';
                     {/* Otros campos */}
                     <h4>¿Habias sabido de nosotros antes?</h4>
                     <div className="modulo">
-                          <label>¿Quién te recomendó esta oportunidad? <input type="text" name="recomendadoPor" value={formData.recomendadoPor} onChange={handleChange} /></label>
-                          <label>ID de tu patrocinador (si aplica): <input type="text" name="idPatrocinador" value={formData.idPatrocinador} onChange={handleChange} /></label>
+                          <label>¿Quién te recomendó esta oportunidad? (Opcional) <input type="text" name="recomendadoPor" value={formData.recomendadoPor} onChange={handleChange} /></label>
+                          <label>ID de tu patrocinador (Opcional): <input type="text" name="idPatrocinador" value={formData.idPatrocinador} onChange={handleChange} /></label>
                     </div>
-                    <h4>te vamos a dar una aseoria personaliza</h4>
+                    <h4>Agenda tu Asesoria Personalizada</h4>
                     <div className="modulo">
                          <label>Fecha de asesoría: <input type="date" name="fechaAsesoria" value={formData.fechaAsesoria} onChange={handleChange} required /></label>
                           <label>Hora de asesoría: <input type="time" name="horaAsesoria" value={formData.horaAsesoria} onChange={handleChange} required /></label>
