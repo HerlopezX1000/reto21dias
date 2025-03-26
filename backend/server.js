@@ -1,9 +1,15 @@
 // backend/server.js
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 3000;
 const db = require('./config/database'); // Importa la conexión a la base de datos
+const transporter = require('./config/nodemailer'); // Importa Nodemailer (si usaste config/nodemailer.js)
+const nodemailer = require('nodemailer'); // Importa Nodemailer (si no usaste config/nodemailer.js)
+const dotenv = require('dotenv'); // Importa dotenv
+dotenv.config(); // Carga las variables de entorno
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -80,7 +86,61 @@ app.post('/registros', (req, res) => {
             horaAsesoria
         );
 
-        res.status(200).json({ message: 'Registro creado con éxito', id: info.lastInsertRowid });
+        // Configura el mensaje de correo para el usuario (ya existente)
+        const mailOptionsUser = {
+            from: process.env.EMAIL_USER,
+            to: correo,
+            subject: 'Registro Exitoso',
+            text: `¡Hola ${nombres} ${apellidos}! Gracias por registrarte.`,
+            // html: `<p>¡Hola ${nombres} ${apellidos}!</p><p>Gracias por registrarte.</p>`, // Opcional: usar HTML
+        };
+
+        // Configura el mensaje de correo para ti
+        const mailOptionsToYou = {
+            from: process.env.EMAIL_USER,
+            to: 'herlopez@gmail.com', // Reemplaza con tu correo personal
+            subject: 'Nuevo Registro en el Formulario',
+            html: `
+                <h2>Nuevo Registro Recibido</h2>
+                <p><strong>Nombre:</strong> ${nombres} ${apellidos}</p>
+                <p><strong>Correo:</strong> ${correo}</p>
+                <p><strong>Teléfono:</strong> ${telefono}</p>
+                <p><strong>Sexo:</strong> ${sexo}</p>
+                <p><strong>Ocupación:</strong> ${ocupacion}</p>
+                <p><strong>País:</strong> ${pais}</p>
+                <p><strong>Índice de Masa Muscular:</strong> ${indiceMasaMuscular || 'No especificado'}</p>
+                <p><strong>Edad:</strong> ${edad}</p>
+                <p><strong>Peso Actual:</strong> ${pesoActual} kg</p>
+                <p><strong>Estatura:</strong> ${estatura} cm</p>
+                <p><strong>Sufre de:</strong> ${sufreDeString || 'Ninguno'}</p>
+                <p><strong>Objetivo:</strong> ${objetivoString || 'Ninguno'}</p>
+                <p><strong>Recomendado por:</strong> ${recomendadoPor || 'No especificado'}</p>
+                <p><strong>ID Patrocinador:</strong> ${idPatrocinador || 'No especificado'}</p>
+                <p><strong>Fecha de Asesoría:</strong> ${fechaAsesoria}</p>
+                <p><strong>Hora de Asesoría:</strong> ${horaAsesoria}</p>
+            `,
+        };
+
+        // Envía el correo al usuario
+        transporter.sendMail(mailOptionsUser, (error, info) => {
+            if (error) {
+                console.error('Error al enviar el correo al usuario:', error);
+            } else {
+                console.log('Correo enviado al usuario:', info.response);
+            }
+        });
+
+        // Envía el correo a ti
+        transporter.sendMail(mailOptionsToYou, (error, info) => {
+            if (error) {
+                console.error('Error al enviar el correo a tu dirección:', error);
+            } else {
+                console.log('Correo enviado a tu dirección:', info.response);
+            }
+        });
+
+        // Respuesta al frontend
+        res.status(200).json({ message: 'Registro creado con éxito. Correo enviado.', id: info.lastInsertRowid });
     } catch (error) {
         console.error('Error al crear el registro:', error);
         res.status(500).json({ error: error.message });
