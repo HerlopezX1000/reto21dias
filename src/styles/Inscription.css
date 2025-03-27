@@ -168,4 +168,28 @@ button:hover {
     background-color: var(--fondo);
 }
 
+.opt-in {
+    margin-top: 2rem;
+    Label {
+        display: flex;
+
+        input {
+            width: 18px;
+            margin-right: 1rem;
+            
+            
+        }
+      
+
+        p {
+            font-size: 1.4rem;
+        }
+        .nuestras-politicas {
+            color: var(--naranja);
+            margin-left: 0.5rem;
+            
+            
+        }
+    }
+}
 /* Estilos para móviles */

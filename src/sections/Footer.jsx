@@ -19,7 +19,10 @@ import '../styles/Footer.css';
                                 </a>
                             </div>
                             <img src="/logo.png" alt="logo reto 21" />
-                            </div>
+                    </div>
+                    <div className="politicasDatos">
+                        Politicas y Condiciones
+                    </div>
                     <div className="derecha">
                              <p>&copy; {new Date().getFullYear()} Reto21dias.com</p>
                              <p>Elaborado @Herlopez</p>

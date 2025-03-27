@@ -3,11 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = 3000;
-const db = require('./config/database'); // Importa la conexión a la base de datos
-const transporter = require('./config/nodemailer'); // Importa Nodemailer (si usaste config/nodemailer.js)
-const nodemailer = require('nodemailer'); // Importa Nodemailer (si no usaste config/nodemailer.js)
-const dotenv = require('dotenv'); // Importa dotenv
-dotenv.config(); // Carga las variables de entorno
+const db = require('./config/database');
+const transporter = require('./config/nodemailer');
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+const crypto = require('crypto');
+dotenv.config();
 
 app.use(cors());
 app.use(express.json());
@@ -58,12 +59,15 @@ app.post('/registros', (req, res) => {
         if (objetivoOtros) objetivoArray.push(objetivoOtros);
         const objetivoString = objetivoArray.join(', ');
 
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+
         const stmt = db.prepare(`
             INSERT INTO registros (
                 nombres, apellidos, correo, telefono, sexo, ocupacion, pais, 
                 indiceMasaMuscular, edad, pesoActual, estatura, sufreDe, objetivo, 
-                recomendadoPor, idPatrocinador, fechaAsesoria, horaAsesoria
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                recomendadoPor, idPatrocinador, fechaAsesoria, horaAsesoria, 
+                verified, verificationToken
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)
         `);
 
         const info = stmt.run(
@@ -83,67 +87,110 @@ app.post('/registros', (req, res) => {
             recomendadoPor,
             idPatrocinador,
             fechaAsesoria,
-            horaAsesoria
+            horaAsesoria,
+            verificationToken
         );
 
-        // Configura el mensaje de correo para el usuario (ya existente)
-        const mailOptionsUser = {
+        const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+        const mailOptionsVerification = {
             from: process.env.EMAIL_USER,
             to: correo,
-            subject: 'Registro Exitoso',
-            text: `¡Hola ${nombres} ${apellidos}! Gracias por registrarte.`,
-            // html: `<p>¡Hola ${nombres} ${apellidos}!</p><p>Gracias por registrarte.</p>`, // Opcional: usar HTML
-        };
-
-        // Configura el mensaje de correo para ti
-        const mailOptionsToYou = {
-            from: process.env.EMAIL_USER,
-            to: 'herlopez@gmail.com', // Reemplaza con tu correo personal
-            subject: 'Nuevo Registro en el Formulario',
+            subject: 'Verifica tu Registro',
             html: `
-                <h2>Nuevo Registro Recibido</h2>
-                <p><strong>Nombre:</strong> ${nombres} ${apellidos}</p>
-                <p><strong>Correo:</strong> ${correo}</p>
-                <p><strong>Teléfono:</strong> ${telefono}</p>
-                <p><strong>Sexo:</strong> ${sexo}</p>
-                <p><strong>Ocupación:</strong> ${ocupacion}</p>
-                <p><strong>País:</strong> ${pais}</p>
-                <p><strong>Índice de Masa Muscular:</strong> ${indiceMasaMuscular || 'No especificado'}</p>
-                <p><strong>Edad:</strong> ${edad}</p>
-                <p><strong>Peso Actual:</strong> ${pesoActual} kg</p>
-                <p><strong>Estatura:</strong> ${estatura} cm</p>
-                <p><strong>Sufre de:</strong> ${sufreDeString || 'Ninguno'}</p>
-                <p><strong>Objetivo:</strong> ${objetivoString || 'Ninguno'}</p>
-                <p><strong>Recomendado por:</strong> ${recomendadoPor || 'No especificado'}</p>
-                <p><strong>ID Patrocinador:</strong> ${idPatrocinador || 'No especificado'}</p>
-                <p><strong>Fecha de Asesoría:</strong> ${fechaAsesoria}</p>
-                <p><strong>Hora de Asesoría:</strong> ${horaAsesoria}</p>
+                <h2>¡Gracias por registrarte, ${nombres} ${apellidos}!</h2>
+                <p>Por favor, haz clic en el siguiente enlace para verificar tu correo:</p>
+                <a href="${verificationLink}">${verificationLink}</a>
+                <p>Si no solicitaste este registro, ignora este correo.</p>
             `,
         };
 
-        // Envía el correo al usuario
+        transporter.sendMail(mailOptionsVerification, (error, info) => {
+            if (error) {
+                console.error('Error al enviar el correo de verificación:', error);
+            } else {
+                console.log('Correo de verificación enviado:', info.response);
+            }
+        });
+
+        res.status(200).json({ message: 'Registro creado. Por favor, verifica tu correo.', id: info.lastInsertRowid });
+    } catch (error) {
+        console.error('Error al crear el registro:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Ruta /verify actualizada para redirigir
+app.get('/verify', (req, res) => {
+    const { token } = req.query;
+
+    try {
+        const stmt = db.prepare('UPDATE registros SET verified = 1 WHERE verificationToken = ? AND verified = 0');
+        const info = stmt.run(token);
+
+        if (info.changes === 0) {
+            // Redirigir a la página de error si el token no es válido o ya fue usado
+            return res.redirect('http://localhost:5173/verification-error'); // Ajusta el puerto si es diferente
+        }
+
+        // Obtener los datos del registro verificado
+        const registro = db.prepare('SELECT * FROM registros WHERE verificationToken = ?').get(token);
+
+        // Enviar correo de bienvenida al usuario
+        const mailOptionsUser = {
+            from: process.env.EMAIL_USER,
+            to: registro.correo,
+            subject: 'Registro Confirmado',
+            text: `¡Hola ${registro.nombres} ${registro.apellidos}! Tu registro ha sido confirmado. ¡Bienvenido!`,
+        };
+
+        // Enviar correo al administrador (tú)
+        const mailOptionsToYou = {
+            from: process.env.EMAIL_USER,
+            to: 'herlopez@gmail.com',
+            subject: 'Nuevo Registro Verificado',
+            html: `
+                <h2>Nuevo Registro Verificado</h2>
+                <p><strong>Nombre:</strong> ${registro.nombres} ${registro.apellidos}</p>
+                <p><strong>Correo:</strong> ${registro.correo}</p>
+                <p><strong>Teléfono:</strong> ${registro.telefono}</p>
+                <p><strong>Sexo:</strong> ${registro.sexo}</p>
+                <p><strong>Ocupación:</strong> ${registro.ocupacion}</p>
+                <p><strong>País:</strong> ${registro.pais}</p>
+                <p><strong>Índice de Masa Muscular:</strong> ${registro.indiceMasaMuscular || 'No especificado'}</p>
+                <p><strong>Edad:</strong> ${registro.edad}</p>
+                <p><strong>Peso Actual:</strong> ${registro.pesoActual} kg</p>
+                <p><strong>Estatura:</strong> ${registro.estatura} cm</p>
+                <p><strong>Sufre de:</strong> ${registro.sufreDe || 'Ninguno'}</p>
+                <p><strong>Objetivo:</strong> ${registro.objetivo || 'Ninguno'}</p>
+                <p><strong>Recomendado por:</strong> ${registro.recomendadoPor || 'No especificado'}</p>
+                <p><strong>ID Patrocinador:</strong> ${registro.idPatrocinador || 'No especificado'}</p>
+                <p><strong>Fecha de Asesoría:</strong> ${registro.fechaAsesoria}</p>
+                <p><strong>Hora de Asesoría:</strong> ${registro.horaAsesoria}</p>
+            `,
+        };
+
+        // Enviar ambos correos
         transporter.sendMail(mailOptionsUser, (error, info) => {
             if (error) {
                 console.error('Error al enviar el correo al usuario:', error);
             } else {
-                console.log('Correo enviado al usuario:', info.response);
+                console.log('Correo de bienvenida enviado:', info.response);
             }
         });
 
-        // Envía el correo a ti
         transporter.sendMail(mailOptionsToYou, (error, info) => {
             if (error) {
-                console.error('Error al enviar el correo a tu dirección:', error);
+                console.error('Error al enviar el correo al administrador:', error);
             } else {
-                console.log('Correo enviado a tu dirección:', info.response);
+                console.log('Correo enviado al administrador:', info.response);
             }
         });
 
-        // Respuesta al frontend
-        res.status(200).json({ message: 'Registro creado con éxito. Correo enviado.', id: info.lastInsertRowid });
+        // Redirigir a la página de éxito
+        res.redirect('http://localhost:5173/verification-success'); // Ajusta el puerto si es diferente
     } catch (error) {
-        console.error('Error al crear el registro:', error);
-        res.status(500).json({ error: error.message });
+        console.error('Error al verificar el token:', error);
+        res.redirect('http://localhost:5173/verification-error'); // Redirigir a error en caso de fallo
     }
 });
 

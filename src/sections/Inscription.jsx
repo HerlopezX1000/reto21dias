@@ -1,5 +1,6 @@
 // src/sections/Inscription.jsx
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Agrega useNavigate
 import axios from 'axios';
 import '../styles/Inscription.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -23,26 +24,42 @@ function Formulario() {
         idPatrocinador: '',
         fechaAsesoria: '',
         horaAsesoria: '',
+        sufreDeOtros: '',
+        objetivoOtros: '',
+        politicas: false,
     });
 
     const [message, setMessage] = useState('');
+    const navigate = useNavigate(); // Hook para redirigir
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: type === 'checkbox' ? (checked ? [...prevData[name], value] : prevData[name].filter((item) => item !== value)) : value,
+            [name]: type === 'checkbox' 
+                ? (name === 'politicas' 
+                    ? checked 
+                    : checked 
+                        ? [...prevData[name], value] 
+                        : prevData[name].filter((item) => item !== value))
+                : value,
         }));
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setMessage('');
+        setMessage(''); // Limpiar mensaje previo
+
+        // Validar que se acepten las políticas de privacidad
+        if (!formData.politicas) {
+            setMessage('Debes aceptar las políticas de privacidad para continuar.');
+            return;
+        }
 
         try {
-            const response = await axios.post('/registros', formData); // Usa ruta relativa gracias al proxy
+            const response = await axios.post('/registros', formData);
             console.log('Datos enviados correctamente:', response.data);
-            setMessage('¡Registro exitoso! Tus datos han sido enviados.');
+            // Reiniciar el formulario
             setFormData({
                 nombres: '',
                 apellidos: '',
@@ -61,14 +78,18 @@ function Formulario() {
                 idPatrocinador: '',
                 fechaAsesoria: '',
                 horaAsesoria: '',
+                sufreDeOtros: '',
+                objetivoOtros: '',
+                politicas: false,
             });
+            // Redirigir a la nueva página en lugar de mostrar mensaje
+            navigate('/verification-pending');
         } catch (error) {
             console.error('Error al enviar los datos:', error);
             setMessage('Error al enviar los datos. Por favor, intenta de nuevo.');
         }
     };
 
-    // Resto del código (formulario) sigue igual...
     return (
         <section id="formulario" className="formulario-section">
             <h2>Formulario de Registro</h2>
@@ -90,8 +111,11 @@ function Formulario() {
                     <img src="../../formulario.jpg" alt="imagen en el formulario" />
                 </div>
                 <form onSubmit={handleSubmit}>
-                    {message && <p className={message.includes('Error') ? 'error-message' : 'success-message'}>{message}</p>}
-                    {/* Resto del formulario... */}
+                    {message && (
+                        <p className={message.includes('Error') ? 'error-message' : 'success-message'}>
+                            {message}
+                        </p>
+                    )}
                     <h4>Datos personales</h4>
                     <div className="modulo">
                         <label>Nombres: <input type="text" name="nombres" value={formData.nombres} onChange={handleChange} required /></label>
@@ -122,37 +146,38 @@ function Formulario() {
                     <h4>Para personalizar tu plan, queremos conocerte mejor</h4>
                     <label>Sufres o has sufrido de lo siguiente:</label>
                     <div className="checkbox-group">
-                        <label><input type="checkbox" name="sufreDe" value="estreñimiento" onChange={handleChange} /> Estreñimiento</label>
-                        <label><input type="checkbox" name="sufreDe" value="anemia" onChange={handleChange} /> Anemia</label>
-                        <label><input type="checkbox" name="sufreDe" value="gastritis" onChange={handleChange} />Gastritis</label>
-                        <label><input type="checkbox" name="sufreDe" value="ulceras" onChange={handleChange} />Úlceras</label>
-                        <label><input type="checkbox" name="sufreDe" value="artrosis" onChange={handleChange} />Artrosis o Artritis</label>
-                        <label><input type="checkbox" name="sufreDe" value="fumador" onChange={handleChange} />Fumador</label>
-                        <label><input type="checkbox" name="sufreDe" value="ansiedad" onChange={handleChange} />Ansiedad</label>
-                        <label><input type="checkbox" name="sufreDe" value="Colesterol" onChange={handleChange} />Colesterol Alto</label>
-                        <label><input type="checkbox" name="sufreDe" value="trigliceridos" onChange={handleChange} />Triglicéridos</label>
-                        <label><input type="checkbox" name="sufreDe" value="hemorroides" onChange={handleChange} />Hemorroides</label>
-                        <label><input type="checkbox" name="sufreDe" value="jaquecas" onChange={handleChange} />Jaquecas y Migraña</label>
-                        <label><input type="checkbox" name="sufreDe" value="Colon" onChange={handleChange} />Colon Irritable</label>
-                        <label><input type="checkbox" name="sufreDe" value="Insomnio" onChange={handleChange} />Insomnio</label>
-                        <label><input type="checkbox" name="sufreDe" value="alergias" onChange={handleChange} />Alergias respiratorias</label>
-                        <label><input type="checkbox" name="sufreDe" value="diabetes" onChange={handleChange} />Diabetes o antecedentes familiares</label>
-                        <label><input type="checkbox" name="sufreDe" value="tensionArterial" onChange={handleChange} />Tensión Arterial o problemas del corazón</label>
-                        <label><input type="checkbox" name="sufreDe" value="ninguno" onChange={handleChange} /> Ninguno</label>
+                        <label><input type="checkbox" name="sufreDe" value="estreñimiento" checked={formData.sufreDe.includes('estreñimiento')} onChange={handleChange} /> Estreñimiento</label>
+                        <label><input type="checkbox" name="sufreDe" value="anemia" checked={formData.sufreDe.includes('anemia')} onChange={handleChange} /> Anemia</label>
+                        <label><input type="checkbox" name="sufreDe" value="gastritis" checked={formData.sufreDe.includes('gastritis')} onChange={handleChange} />Gastritis</label>
+                        <label><input type="checkbox" name="sufreDe" value="ulceras" checked={formData.sufreDe.includes('ulceras')} onChange={handleChange} />Úlceras</label>
+                        <label><input type="checkbox" name="sufreDe" value="artrosis" checked={formData.sufreDe.includes('artrosis')} onChange={handleChange} />Artrosis o Artritis</label>
+                        <label><input type="checkbox" name="sufreDe" value="fumador" checked={formData.sufreDe.includes('fumador')} onChange={handleChange} />Fumador</label>
+                        <label><input type="checkbox" name="sufreDe" value="ansiedad" checked={formData.sufreDe.includes('ansiedad')} onChange={handleChange} />Ansiedad</label>
+                        <label><input type="checkbox" name="sufreDe" value="Colesterol" checked={formData.sufreDe.includes('Colesterol')} onChange={handleChange} />Colesterol Alto</label>
+                        <label><input type="checkbox" name="sufreDe" value="trigliceridos" checked={formData.sufreDe.includes('trigliceridos')} onChange={handleChange} />Triglicéridos</label>
+                        <label><input type="checkbox" name="sufreDe" value="hemorroides" checked={formData.sufreDe.includes('hemorroides')} onChange={handleChange} />Hemorroides</label>
+                        <label><input type="checkbox" name="sufreDe" value="jaquecas" checked={formData.sufreDe.includes('jaquecas')} onChange={handleChange} />Jaquecas y Migraña</label>
+                        <label><input type="checkbox" name="sufreDe" value="Colon" checked={formData.sufreDe.includes('Colon')} onChange={handleChange} />Colon Irritable</label>
+                        <label><input type="checkbox" name="sufreDe" value="Insomnio" checked={formData.sufreDe.includes('Insomnio')} onChange={handleChange} />Insomnio</label>
+                        <label><input type="checkbox" name="sufreDe" value="Cancer" checked={formData.sufreDe.includes('Cancer')} onChange={handleChange} />Cancer</label>
+                        <label><input type="checkbox" name="sufreDe" value="alergias" checked={formData.sufreDe.includes('alergias')} onChange={handleChange} />Alergias respiratorias</label>
+                        <label><input type="checkbox" name="sufreDe" value="diabetes" checked={formData.sufreDe.includes('diabetes')} onChange={handleChange} />Diabetes o antecedentes familiares</label>
+                        <label><input type="checkbox" name="sufreDe" value="tensionArterial" checked={formData.sufreDe.includes('tensionArterial')} onChange={handleChange} />Tensión Arterial o problemas del corazón</label>
+                        <label><input type="checkbox" name="sufreDe" value="Saludable" checked={formData.sufreDe.includes('Saludable')} onChange={handleChange} /> Saludable</label>
                         <label>Otros: <input type="text" name="sufreDeOtros" value={formData.sufreDeOtros} onChange={handleChange} /></label>
                     </div>
                     <h4>Cuál es tu propósito al asumir este reto</h4>
                     <label>Dime cuál es tu objetivo y/o meta con el reto seleccionado:</label>
                     <div className="checkbox-group">
-                        <label><input type="checkbox" name="objetivo" value="aumentoMasaMuscular" onChange={handleChange} /> Aumento de Masa Muscular</label>
-                        <label><input type="checkbox" name="objetivo" value="perdidaPeso" onChange={handleChange} /> Pérdida de Peso</label>
-                        <label><input type="checkbox" name="objetivo" value="energia" onChange={handleChange} /> Energía y Vitalidad</label>
-                        <label><input type="checkbox" name="objetivo" value="digestion" onChange={handleChange} /> Digestión y Metabolismo</label>
-                        <label><input type="checkbox" name="objetivo" value="calidadSueno" onChange={handleChange} /> Calidad de sueño y descanso</label>
-                        <label><input type="checkbox" name="objetivo" value="refuerzo" onChange={handleChange} /> Refuerzo del sistema inmunológico</label>
-                        <label><input type="checkbox" name="objetivo" value="piel" onChange={handleChange} /> Piel saludable y radiante</label>
-                        <label><input type="checkbox" name="objetivo" value="estres" onChange={handleChange} /> Estrés y Estado de ánimo</label>
-                        <label><input type="checkbox" name="objetivo" value="calidadSueno" onChange={handleChange} /> Control y mejora de la salud cardiovascular</label>
+                        <label><input type="checkbox" name="objetivo" value="aumentoMasaMuscular" checked={formData.objetivo.includes('aumentoMasaMuscular')} onChange={handleChange} /> Aumento de Masa Muscular</label>
+                        <label><input type="checkbox" name="objetivo" value="perdidaPeso" checked={formData.objetivo.includes('perdidaPeso')} onChange={handleChange} /> Pérdida de Peso</label>
+                        <label><input type="checkbox" name="objetivo" value="energia" checked={formData.objetivo.includes('energia')} onChange={handleChange} /> Energía y Vitalidad</label>
+                        <label><input type="checkbox" name="objetivo" value="digestion" checked={formData.objetivo.includes('digestion')} onChange={handleChange} /> Digestión y Metabolismo</label>
+                        <label><input type="checkbox" name="objetivo" value="calidadSueno" checked={formData.objetivo.includes('calidadSueno')} onChange={handleChange} /> Calidad de sueño y descanso</label>
+                        <label><input type="checkbox" name="objetivo" value="refuerzo" checked={formData.objetivo.includes('refuerzo')} onChange={handleChange} /> Refuerzo del sistema inmunológico</label>
+                        <label><input type="checkbox" name="objetivo" value="piel" checked={formData.objetivo.includes('piel')} onChange={handleChange} /> Piel saludable y radiante</label>
+                        <label><input type="checkbox" name="objetivo" value="estres" checked={formData.objetivo.includes('estres')} onChange={handleChange} /> Estrés y Estado de ánimo</label>
+                        <label><input type="checkbox" name="objetivo" value="saludCardiovascular" checked={formData.objetivo.includes('saludCardiovascular')} onChange={handleChange} /> Control y mejora de la salud cardiovascular</label>
                         <label>Otros: <input type="text" name="objetivoOtros" value={formData.objetivoOtros} onChange={handleChange} /></label>
                     </div>
                     <h4>¿Habías sabido de nosotros antes?</h4>
@@ -165,7 +190,20 @@ function Formulario() {
                         <label>Fecha de asesoría: <input type="date" name="fechaAsesoria" value={formData.fechaAsesoria} onChange={handleChange} required /></label>
                         <label>Hora de asesoría: <input type="time" name="horaAsesoria" value={formData.horaAsesoria} onChange={handleChange} required /></label>
                     </div>
-                    <button type="submit">Finalizar Registro</button>
+                    <div className="opt-in">
+                        <label>
+                            <input 
+                                type="checkbox" 
+                                name="politicas" 
+                                checked={formData.politicas} 
+                                onChange={handleChange} 
+                                required 
+                            />
+                            <p>Acepta Nuestras </p>
+                            <Link to="/Politicas"><p className='nuestras-politicas'>Políticas de Privacidad</p></Link>
+                        </label>
+                    </div>
+                    <button type="submit">Registrarme</button>
                 </form>
             </div>
         </section>
