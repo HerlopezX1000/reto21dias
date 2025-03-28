@@ -193,3 +193,107 @@ button:hover {
     }
 }
 /* Estilos para móviles */
+
+
+/* Estilos para el overlay del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+}
+
+/* Estilos para el contenido del modal */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+/* Estilos para el título del modal */
+.modal-content h3 {
+    margin: 0 0 10px;
+    color: #d32f2f; /* Color rojo para el título */
+}
+
+/* Estilos para el mensaje del modal */
+.modal-content p {
+    margin: 0 0 20px;
+    color: #333;
+}
+
+/* Estilos para el botón del modal */
+.modal-content button {
+    background-color: #d32f2f; /* Color rojo para el botón */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.modal-content button:hover {
+    background-color: #b71c1c; /* Color más oscuro al pasar el mouse */
+}
+
+/* Estilo para el botón deshabilitado */
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+
+/* Estilos para el DatePicker */
+.react-datepicker-wrapper {
+    display: block;
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Estilo para las fechas deshabilitadas */
+.react-datepicker__day--disabled {
+    color: #ccc !important;
+    background-color: #f0f0f0 !important;
+    cursor: not-allowed !important;
+}
+
+/* Estilo para el select de horas */
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Estilo para las opciones deshabilitadas en el select */
+select option:disabled {
+    color: #ccc;
+    background-color: #f0f0f0;
+}
+
+/* Estilo para el botón deshabilitado */
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}

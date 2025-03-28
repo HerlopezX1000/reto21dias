@@ -8,7 +8,9 @@ const transporter = require('./config/nodemailer');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const crypto = require('crypto');
+
 dotenv.config();
+process.env.TZ = 'America/Bogota'; // Configura el servidor en GMT-5 (Colombia)
 
 app.use(cors());
 app.use(express.json());
@@ -19,10 +21,62 @@ app.get('/', (req, res) => {
 
 app.get('/registros', (req, res) => {
     try {
-        const registros = db.prepare('SELECT * FROM registros').all();
+        const registros = db.prepare('SELECT * FROM registros WHERE verified = 1').all();
         res.json(registros);
     } catch (error) {
         console.error('Error al obtener registros:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Cambiamos /fechas-bloqueadas por /bloqueos para que coincida con el frontend
+app.get('/bloqueos', (req, res) => {
+    try {
+        const stmt = db.prepare('SELECT DISTINCT fecha FROM bloqueos WHERE horaInicio IS NULL');
+        const fechasBloqueadas = stmt.all().map(row => row.fecha);
+        res.json(fechasBloqueadas);
+    } catch (error) {
+        console.error('Error al obtener fechas bloqueadas:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/horarios-ocupados', (req, res) => {
+    const { fecha } = req.query;
+    try {
+        const stmtCitas = db.prepare('SELECT horaAsesoria FROM registros WHERE fechaAsesoria = ? AND verified = 1');
+        const ocupadosCitas = stmtCitas.all(fecha).map(row => row.horaAsesoria);
+
+        const stmtBloqueos = db.prepare(`
+            SELECT horaInicio, horaFin FROM bloqueos 
+            WHERE fecha = ? AND horaInicio IS NOT NULL AND horaFin IS NOT NULL
+        `);
+        const bloqueos = stmtBloqueos.all(fecha);
+
+        const horariosPermitidos = [
+            '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00',
+            '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'
+        ];
+
+        let ocupados = [...ocupadosCitas];
+        bloqueos.forEach(bloqueo => {
+            const inicio = horariosPermitidos.indexOf(bloqueo.horaInicio);
+            const fin = horariosPermitidos.indexOf(bloqueo.horaFin);
+            for (let i = inicio; i <= fin; i++) {
+                if (!ocupados.includes(horariosPermitidos[i])) {
+                    ocupados.push(horariosPermitidos[i]);
+                }
+            }
+        });
+
+        const diaBloqueado = db.prepare('SELECT COUNT(*) as count FROM bloqueos WHERE fecha = ? AND horaInicio IS NULL').get(fecha);
+        if (diaBloqueado.count > 0) {
+            ocupados = [...horariosPermitidos];
+        }
+
+        res.json(ocupados);
+    } catch (error) {
+        console.error('Error al obtener horarios ocupados:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -58,6 +112,22 @@ app.post('/registros', (req, res) => {
         const objetivoArray = Array.isArray(objetivo) ? objetivo : [];
         if (objetivoOtros) objetivoArray.push(objetivoOtros);
         const objetivoString = objetivoArray.join(', ');
+
+        const checkStmt = db.prepare('SELECT COUNT(*) as count FROM registros WHERE fechaAsesoria = ? AND horaAsesoria = ? AND verified = 1');
+        const result = checkStmt.get(fechaAsesoria, horaAsesoria);
+        if (result.count > 0) {
+            return res.status(400).json({ error: 'El horario seleccionado ya está ocupado. Por favor, elige otro.' });
+        }
+
+        const checkBloqueo = db.prepare(`
+            SELECT COUNT(*) as count FROM bloqueos 
+            WHERE fecha = ? 
+            AND (horaInicio IS NULL OR (horaInicio <= ? AND horaFin >= ?))
+        `);
+        const bloqueoResult = checkBloqueo.get(fechaAsesoria, horaAsesoria, horaAsesoria);
+        if (bloqueoResult.count > 0) {
+            return res.status(400).json({ error: 'El horario seleccionado está bloqueado por el administrador.' });
+        }
 
         const verificationToken = crypto.randomBytes(32).toString('hex');
 
@@ -119,7 +189,29 @@ app.post('/registros', (req, res) => {
     }
 });
 
-// Ruta /verify actualizada para redirigir
+app.post('/bloqueos', (req, res) => {
+    try {
+        const { fecha, horaInicio, horaFin } = req.body;
+        const stmt = db.prepare('INSERT INTO bloqueos (fecha, horaInicio, horaFin) VALUES (?, ?, ?)');
+        const info = stmt.run(fecha, horaInicio || null, horaFin || null);
+        res.status(200).json({ message: 'Bloqueo creado con éxito', id: info.lastInsertRowid });
+    } catch (error) {
+        console.error('Error al crear bloqueo:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Renombramos el endpoint /bloqueos a /bloqueos-completos para evitar conflictos
+app.get('/bloqueos-completos', (req, res) => {
+    try {
+        const bloqueos = db.prepare('SELECT * FROM bloqueos').all();
+        res.json(bloqueos);
+    } catch (error) {
+        console.error('Error al obtener bloqueos:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/verify', (req, res) => {
     const { token } = req.query;
 
@@ -128,14 +220,11 @@ app.get('/verify', (req, res) => {
         const info = stmt.run(token);
 
         if (info.changes === 0) {
-            // Redirigir a la página de error si el token no es válido o ya fue usado
-            return res.redirect('http://localhost:5173/verification-error'); // Ajusta el puerto si es diferente
+            return res.redirect('http://localhost:5173/verification-error');
         }
 
-        // Obtener los datos del registro verificado
         const registro = db.prepare('SELECT * FROM registros WHERE verificationToken = ?').get(token);
 
-        // Enviar correo de bienvenida al usuario
         const mailOptionsUser = {
             from: process.env.EMAIL_USER,
             to: registro.correo,
@@ -143,7 +232,6 @@ app.get('/verify', (req, res) => {
             text: `¡Hola ${registro.nombres} ${registro.apellidos}! Tu registro ha sido confirmado. ¡Bienvenido!`,
         };
 
-        // Enviar correo al administrador (tú)
         const mailOptionsToYou = {
             from: process.env.EMAIL_USER,
             to: 'herlopez@gmail.com',
@@ -169,7 +257,6 @@ app.get('/verify', (req, res) => {
             `,
         };
 
-        // Enviar ambos correos
         transporter.sendMail(mailOptionsUser, (error, info) => {
             if (error) {
                 console.error('Error al enviar el correo al usuario:', error);
@@ -186,11 +273,10 @@ app.get('/verify', (req, res) => {
             }
         });
 
-        // Redirigir a la página de éxito
-        res.redirect('http://localhost:5173/verification-success'); // Ajusta el puerto si es diferente
+        res.redirect('http://localhost:5173/verification-success');
     } catch (error) {
         console.error('Error al verificar el token:', error);
-        res.redirect('http://localhost:5173/verification-error'); // Redirigir a error en caso de fallo
+        res.redirect('http://localhost:5173/verification-error');
     }
 });
 

@@ -1,7 +1,10 @@
 // src/sections/Inscription.jsx
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Agrega useNavigate
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { format, parse } from 'date-fns';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import DatePicker from 'react-datepicker';
 import '../styles/Inscription.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -29,8 +32,77 @@ function Formulario() {
         politicas: false,
     });
 
-    const [message, setMessage] = useState('');
-    const navigate = useNavigate(); // Hook para redirigir
+    const [horariosOcupados, setHorariosOcupados] = useState([]);
+    const [fechasBloqueadas, setFechasBloqueadas] = useState([]);
+    const navigate = useNavigate();
+
+    const horariosPermitidosColombia = [
+        '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00',
+        '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'
+    ];
+
+    const ajustarHorariosALocal = (horarios, fecha) => {
+        try {
+            return horarios.map(hora => {
+                const fechaColombia = `${fecha}T${hora}:00-05:00`;
+                const zonedDate = utcToZonedTime(fechaColombia, Intl.DateTimeFormat().resolvedOptions().timeZone);
+                return format(zonedDate, 'HH:mm');
+            });
+        } catch (error) {
+            console.error('Error al ajustar horarios:', error);
+            return horarios.map(hora => {
+                const [hours, minutes] = hora.split(':').map(Number);
+                const date = new Date(`${fecha}T${hora}:00-05:00`);
+                const offsetColombia = -5 * 60;
+                const offsetLocal = date.getTimezoneOffset();
+                const diffMinutes = offsetLocal - offsetColombia;
+                date.setMinutes(date.getMinutes() - diffMinutes);
+                return format(date, 'HH:mm');
+            });
+        }
+    };
+
+    useEffect(() => {
+        const fetchFechasBloqueadas = async () => {
+            try {
+                const response = await axios.get('/bloqueos'); // Cambiamos /fechas-bloqueadas por /bloqueos
+                console.log('Fechas bloqueadas recibidas:', response.data);
+                if (Array.isArray(response.data)) {
+                    setFechasBloqueadas(response.data);
+                } else {
+                    console.error('La respuesta de /bloqueos no es un array:', response.data);
+                    setFechasBloqueadas([]);
+                }
+            } catch (error) {
+                console.error('Error al obtener fechas bloqueadas:', error);
+                setFechasBloqueadas([]);
+            }
+        };
+        fetchFechasBloqueadas();
+    }, []);
+
+    useEffect(() => {
+        if (formData.fechaAsesoria) {
+            const fetchHorariosOcupados = async () => {
+                try {
+                    const response = await axios.get('/horarios-ocupados', {
+                        params: { fecha: formData.fechaAsesoria }
+                    });
+                    console.log('Horarios ocupados recibidos:', response.data);
+                    if (Array.isArray(response.data)) {
+                        setHorariosOcupados(response.data);
+                    } else {
+                        console.error('La respuesta de /horarios-ocupados no es un array:', response.data);
+                        setHorariosOcupados([]);
+                    }
+                } catch (error) {
+                    console.error('Error al obtener horarios ocupados:', error);
+                    setHorariosOcupados([]);
+                }
+            };
+            fetchHorariosOcupados();
+        }
+    }, [formData.fechaAsesoria]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -46,20 +118,34 @@ function Formulario() {
         }));
     };
 
+    const handleDateChange = (date) => {
+        if (date) {
+            const formattedDate = format(date, 'yyyy-MM-dd');
+            setFormData((prevData) => ({
+                ...prevData,
+                fechaAsesoria: formattedDate,
+                horaAsesoria: '',
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                fechaAsesoria: '',
+                horaAsesoria: '',
+            }));
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setMessage(''); // Limpiar mensaje previo
 
-        // Validar que se acepten las políticas de privacidad
         if (!formData.politicas) {
-            setMessage('Debes aceptar las políticas de privacidad para continuar.');
+            alert('Debes aceptar las políticas de privacidad para continuar.');
             return;
         }
 
         try {
             const response = await axios.post('/registros', formData);
             console.log('Datos enviados correctamente:', response.data);
-            // Reiniciar el formulario
             setFormData({
                 nombres: '',
                 apellidos: '',
@@ -82,12 +168,19 @@ function Formulario() {
                 objetivoOtros: '',
                 politicas: false,
             });
-            // Redirigir a la nueva página en lugar de mostrar mensaje
             navigate('/verification-pending');
         } catch (error) {
             console.error('Error al enviar los datos:', error);
-            setMessage('Error al enviar los datos. Por favor, intenta de nuevo.');
+            alert(error.response?.data?.error || 'Error al enviar los datos. Por favor, intenta de nuevo.');
         }
+    };
+
+    const horariosDisponibles = horariosPermitidosColombia.filter(hora => !horariosOcupados.includes(hora));
+    const horariosDisponiblesLocal = formData.fechaAsesoria ? ajustarHorariosALocal(horariosDisponibles, formData.fechaAsesoria) : [];
+
+    const isDateDisabled = (date) => {
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        return fechasBloqueadas.includes(formattedDate);
     };
 
     return (
@@ -111,11 +204,6 @@ function Formulario() {
                     <img src="../../formulario.jpg" alt="imagen en el formulario" />
                 </div>
                 <form onSubmit={handleSubmit}>
-                    {message && (
-                        <p className={message.includes('Error') ? 'error-message' : 'success-message'}>
-                            {message}
-                        </p>
-                    )}
                     <h4>Datos personales</h4>
                     <div className="modulo">
                         <label>Nombres: <input type="text" name="nombres" value={formData.nombres} onChange={handleChange} required /></label>
@@ -187,23 +275,58 @@ function Formulario() {
                     </div>
                     <h4>Agenda tu Asesoría Personalizada</h4>
                     <div className="modulo">
-                        <label>Fecha de asesoría: <input type="date" name="fechaAsesoria" value={formData.fechaAsesoria} onChange={handleChange} required /></label>
-                        <label>Hora de asesoría: <input type="time" name="horaAsesoria" value={formData.horaAsesoria} onChange={handleChange} required /></label>
+                        <label>Fecha de asesoría:
+                            <DatePicker
+                                selected={formData.fechaAsesoria ? parse(formData.fechaAsesoria, 'yyyy-MM-dd', new Date()) : null}
+                                onChange={handleDateChange}
+                                minDate={new Date()}
+                                excludeDates={fechasBloqueadas.map(date => parse(date, 'yyyy-MM-dd', new Date()))}
+                                dateFormat="yyyy-MM-dd"
+                                placeholderText="Selecciona una fecha"
+                                required
+                            />
+                        </label>
+                        <label>Hora de asesoría:
+                            <select
+                                name="horaAsesoria"
+                                value={formData.horaAsesoria}
+                                onChange={handleChange}
+                                required
+                                disabled={!formData.fechaAsesoria}
+                            >
+                                <option value="">Selecciona un horario</option>
+                                {horariosPermitidosColombia.map((hora, index) => {
+                                    const horaLocal = formData.fechaAsesoria ? ajustarHorariosALocal([hora], formData.fechaAsesoria)[0] : hora;
+                                    const isDisabled = horariosOcupados.includes(hora);
+                                    return (
+                                        <option
+                                            key={hora}
+                                            value={hora}
+                                            disabled={isDisabled}
+                                        >
+                                            {horaLocal} (Hora local) {isDisabled ? '(Ocupado)' : ''}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </label>
                     </div>
                     <div className="opt-in">
                         <label>
-                            <input 
-                                type="checkbox" 
-                                name="politicas" 
-                                checked={formData.politicas} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="checkbox"
+                                name="politicas"
+                                checked={formData.politicas}
+                                onChange={handleChange}
+                                required
                             />
                             <p>Acepta Nuestras </p>
                             <Link to="/Politicas"><p className='nuestras-politicas'>Políticas de Privacidad</p></Link>
                         </label>
                     </div>
-                    <button type="submit">Registrarme</button>
+                    <button type="submit" disabled={!formData.politicas}>
+                        Registrarme
+                    </button>
                 </form>
             </div>
         </section>

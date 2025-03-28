@@ -14,6 +14,7 @@ import Politicas from './pages/Politicas';
 import VerificationPending from './sections/VerificationPending';
 import VerificationSuccess from './sections/VerificationSuccess';
 import VerificationError from './sections/VerificationError';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function App() {
     return (
