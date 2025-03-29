@@ -256,24 +256,75 @@ button:disabled {
 
 
 /* Estilos para el DatePicker */
+
+/* src/styles/Inscription.css */
+
+/* Asegurarse de que el contenedor del DatePicker sea lo suficientemente ancho */
 .react-datepicker-wrapper {
     display: block;
     width: 100%;
 }
 
+/* Hacer que el campo de entrada ocupe todo el ancho disponible */
 .react-datepicker__input-container input {
     width: 100%;
-    padding: 8px;
+    padding: 0.8rem; /* 8px */
     border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+    border-radius: 0.4rem; /* 4px */
+    font-size: 1.6rem; /* 16px con 1rem = 10px */
+    box-sizing: border-box;
 }
 
-/* Estilo para las fechas deshabilitadas */
+/* Estilo para las fechas deshabilitadas (sin cambios) */
 .react-datepicker__day--disabled {
-    color: #ccc !important;
-    background-color: #f0f0f0 !important;
+    color: #9c9c9c !important;
+    background-color: #e6e6e6 !important;
     cursor: not-allowed !important;
+}
+
+/* Ajustar el ancho del calendario para que coincida con el campo de entrada */
+.react-datepicker {
+    width: 100% !important; /* Hacer que el calendario ocupe el mismo ancho que el input */
+    max-width: 32rem; /* 320px - ancho máximo para evitar que sea demasiado grande */
+    font-size: 1.6rem; /* 16px con 1rem = 10px */
+    border: 1px solid #ccc;
+}
+
+/* Ajustar el tamaño de los días en el calendario */
+.react-datepicker__day,
+.react-datepicker__day-name {
+    width: 3rem !important; /* 30px */
+    line-height: 3rem !important; /* 30px */
+    margin: 0.2rem !important; /* 2px */
+}
+
+/* Ajustar el tamaño del encabezado del calendario */
+.react-datepicker__header {
+    padding: 1rem 0 !important; /* 10px */
+    font-size: 1.6rem !important; /* 16px */
+}
+
+/* Ajustar el tamaño del triángulo de navegación */
+.react-datepicker__navigation {
+    top: 1rem !important; /* 10px */
+}
+
+/* Ajustar el tamaño del selector de mes/año */
+.react-datepicker__current-month {
+    font-size: 1.6rem !important; /* 16px */
+}
+
+/* Asegurarse de que el calendario sea responsive */
+@media (max-width: 768px) {
+    .react-datepicker {
+        max-width: 28rem; /* 280px - reducir el ancho máximo en pantallas pequeñas */
+    }
+
+    .react-datepicker__day,
+    .react-datepicker__day-name {
+        width: 2.5rem !important; /* 25px */
+        line-height: 2.5rem !important; /* 25px */
+    }
 }
 
 /* Estilo para el select de horas */

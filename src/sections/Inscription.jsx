@@ -5,6 +5,7 @@ import axios from 'axios';
 import { format, parse } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import DatePicker from 'react-datepicker';
+import { es } from 'date-fns/locale';
 import '../styles/Inscription.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -37,8 +38,8 @@ function Formulario() {
     const navigate = useNavigate();
 
     const horariosPermitidosColombia = [
-        '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00',
-        '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'
+        '08:00', '09:00', '10:00', '11:00', '12:00',
+        '14:00', '15:00', '16:00',  '17:00', '18:00', '19:00', '20:00'
     ];
 
     const ajustarHorariosALocal = (horarios, fecha) => {
@@ -197,7 +198,7 @@ function Formulario() {
                         <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-instagram"></i>
                         </a>
-                        <a href="https://wa.me/+573219777717" target="_blank" rel="noopener noreferrer">
+                        <a href="https://wa.me/+573118006484" target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-whatsapp"></i>
                         </a>
                     </div>
@@ -283,6 +284,9 @@ function Formulario() {
                                 excludeDates={fechasBloqueadas.map(date => parse(date, 'yyyy-MM-dd', new Date()))}
                                 dateFormat="yyyy-MM-dd"
                                 placeholderText="Selecciona una fecha"
+                                wrapperClassName='date-picker-wrapper'
+                                className='date-picker-input'
+                                locale={es}
                                 required
                             />
                         </label>

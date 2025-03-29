@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/Footer.css';
+import { Link } from 'react-router-dom';
 
     function Footer() {
         return (
@@ -14,14 +15,16 @@ import '../styles/Footer.css';
                                 <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
                                     <i className="fab fa-instagram"></i>
                                 </a>
-                                <a href="https://wa.me/+573219777717" target="_blank" rel="noopener noreferrer">
+                                <a href="https://wa.me/+573118006484" target="_blank" rel="noopener noreferrer">
                                     <i className="fab fa-whatsapp"></i>
                                 </a>
                             </div>
                             <img src="/logo.png" alt="logo reto 21" />
                     </div>
                     <div className="politicasDatos">
-                        Politicas y Condiciones
+                        <Link to="/politicas">
+                              <p>politicas y condiciones</p>
+                        </Link>
                     </div>
                     <div className="derecha">
                              <p>&copy; {new Date().getFullYear()} Reto21dias.com</p>

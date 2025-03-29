@@ -229,7 +229,12 @@ app.get('/verify', (req, res) => {
             from: process.env.EMAIL_USER,
             to: registro.correo,
             subject: 'Registro Confirmado',
-            text: `¡Hola ${registro.nombres} ${registro.apellidos}! Tu registro ha sido confirmado. ¡Bienvenido!`,
+            html: `
+                <h2>¡Hola ${registro.nombres} ${registro.apellidos}!</h2>
+                <p>Tu registro ha sido confirmado. ¡Bienvenido!</p>
+                <p>Hemos agendado tu asesoría para el <strong>${registro.fechaAsesoria}</strong> a las <strong>${registro.horaAsesoria}</strong>.</p>
+                <p>Si necesitas reprogramar o tienes alguna pregunta, no dudes en contactarnos.</p>
+            `,
         };
 
         const mailOptionsToYou = {
@@ -273,7 +278,7 @@ app.get('/verify', (req, res) => {
             }
         });
 
-        res.redirect('http://localhost:5173/verification-success');
+        res.redirect(`http://localhost:5173/verification-success?nombres=${encodeURIComponent(registro.nombres)}&apellidos=${encodeURIComponent(registro.apellidos)}&fechaAsesoria=${encodeURIComponent(registro.fechaAsesoria)}&horaAsesoria=${encodeURIComponent(registro.horaAsesoria)}`);
     } catch (error) {
         console.error('Error al verificar el token:', error);
         res.redirect('http://localhost:5173/verification-error');
