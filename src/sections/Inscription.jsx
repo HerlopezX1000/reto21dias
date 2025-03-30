@@ -192,11 +192,17 @@ function Formulario() {
                     <h3>"Haz de cada día tu obra maestra"</h3>
                     <p className="nombre">John Wooden</p>
                     <div className="navbar-social">
-                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.facebook.com/r21globalteam" target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-facebook"></i>
                         </a>
-                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.instagram.com/r21globalteam/" target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@R21GlobalTeam" target="_blank" rel="noopener noreferrer">
+                                 <i class="fa-brands fa-youtube"></i>
+                        </a>
+                        <a href="http://www.tiktok.com/@r21globalteam" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-brands fa-tiktok"></i>
                         </a>
                         <a href="https://wa.me/+573118006484" target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-whatsapp"></i>

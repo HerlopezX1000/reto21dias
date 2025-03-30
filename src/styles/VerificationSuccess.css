@@ -27,6 +27,27 @@
             margin-right: auto;
             display: block;
         }
+
+        .regalo {
+            margin-top: 2rem;
+            font-family: var(--fuente-titulos);
+            color: var(--naranja);
+        }
+
+        i {
+            display: block;
+            align-items: center;
+            text-align: center;
+            color: var(--fondo);
+            font-size: 5rem;
+        }
+
+        .img-regalo {
+            
+            margin: 0 auto;
+            width: 15rem;
+            align-items: center;
+        }
       
     }
    

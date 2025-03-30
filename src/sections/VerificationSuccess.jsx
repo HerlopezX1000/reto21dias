@@ -38,14 +38,17 @@ const VerificationSuccess = () => {
                     <h3>¡Hola {nombres} {apellidos}! Tu correo ha sido verificado con éxito.</h3>
                     <p>Tu asesoría está programada para el {fechaFormateada} a las {horaAsesoria}.</p>
                     <p>Hemos enviado un correo de confirmación a tu dirección. Ahora estás listo(a) para comenzar tu reto.</p>
-                    <p>Si tienes alguna pregunta, no dudes en contactarnos a través de nuestras redes sociales o  <a href="https://wa.me/+573118006484" target="_blank" rel="noopener noreferrer">
-                      <i className="fab fa-whatsapp"></i>
-                     </a></p>
+                    <p>Si tienes alguna pregunta, no dudes en contactarnos a través de nuestras redes sociales o WhatsApp  </p>
+
+                     <p className='regalo'>Escríbeme al WhatsApp y recibe de regalo la guía completa de alimentación saludable </p>
+                     <a href="https://wa.me/+573118006484" target="_blank" rel="noopener noreferrer">
+                     <i class="fa-brands fa-square-whatsapp"></i>
+                     </a>
                     <p>¡Gracias por unirte a nosotros!</p>
 
-                    <Link to="/">
-                        <button>volver</button>
-                    </Link>
+                    <img src="./regalo.png" alt="" className="img-regalo" />
+
+                 
 
                    
                 </div>
