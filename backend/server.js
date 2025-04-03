@@ -15,7 +15,9 @@ app.use(express.json());
 
 // Rutas
 const formRoutes = require('./routes/formRoutes');
-app.use('/', formRoutes);
+const authRoutes = require('./routes/authRoutes'); 
+app.use('/api', formRoutes);
+app.use('/api/auth', authRoutes);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;

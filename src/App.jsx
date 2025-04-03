@@ -14,6 +14,8 @@ import Politicas from './pages/Politicas';
 import VerificationPending from './sections/VerificationPending';
 import VerificationSuccess from './sections/VerificationSuccess';
 import VerificationError from './sections/VerificationError';
+import PerfilPro from './sections/PerfilPro';
+import Admin from './sections/Admin';
 import 'react-datepicker/dist/react-datepicker.css';
 
 function App() {
@@ -26,6 +28,7 @@ function App() {
                         <Hero />
                         <Video id="video" />
                         <Information id="information" />
+                        <PerfilPro id="perfilpro" />
                         <Testimonials id="testimonials" />
                         <Inscription id="inscription" />
                         <Footer />
@@ -38,6 +41,7 @@ function App() {
                 <Route path="/verification-pending" element={<VerificationPending />} />
                 <Route path="/verification-success" element={<VerificationSuccess />} />
                 <Route path="/verification-error" element={<VerificationError />} />
+                <Route path="/admin" element={<Admin />} />
                
                 {/* Otras rutas... */}
             </Routes>

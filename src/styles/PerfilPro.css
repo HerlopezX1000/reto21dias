@@ -1,0 +1,57 @@
+
+
+.perfil {
+    background-color: var(--blanco);
+
+    h2{
+        text-align: center;
+    }
+
+    .contenedor {
+        display: flex;
+        gap: 2rem;
+        
+
+        .presentacion {
+            width: 50%;
+
+            img {
+                width: 40rem;
+                height: 20rem;
+                margin: 0 auto;
+                
+            }
+
+
+
+            .descripcion-perfil {
+                font-size: 1.4rem;
+                text-align: justify;
+            }
+        }
+
+        .video-choaching {
+            width: 50%;
+        }
+    }
+}
+
+
+@media (max-width: 768px) {
+    
+
+        .perfil .contenedor {
+            display: block;
+            
+            .presentacion {
+                width: 100%;
+            }
+    
+            .video-choaching {
+                width: 100%;
+            }
+        
+        }
+
+     
+}

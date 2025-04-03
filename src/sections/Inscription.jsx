@@ -66,7 +66,7 @@ function Formulario() {
     useEffect(() => {
         const fetchFechasBloqueadas = async () => {
             try {
-                const response = await axios.get('/bloqueos'); // Cambiamos /fechas-bloqueadas por /bloqueos
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/bloqueos`); // Cambiamos /fechas-bloqueadas por /bloqueos
                 console.log('Fechas bloqueadas recibidas:', response.data);
                 if (Array.isArray(response.data)) {
                     setFechasBloqueadas(response.data);
@@ -86,9 +86,7 @@ function Formulario() {
         if (formData.fechaAsesoria) {
             const fetchHorariosOcupados = async () => {
                 try {
-                    const response = await axios.get('/horarios-ocupados', {
-                        params: { fecha: formData.fechaAsesoria }
-                    });
+                    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/horarios-ocupados`, { params: { fecha: formData.fechaAsesoria } });
                     console.log('Horarios ocupados recibidos:', response.data);
                     if (Array.isArray(response.data)) {
                         setHorariosOcupados(response.data);
@@ -145,7 +143,7 @@ function Formulario() {
         }
 
         try {
-            const response = await axios.post('/registros', formData);
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/registros`, formData);
             console.log('Datos enviados correctamente:', response.data);
             setFormData({
                 nombres: '',

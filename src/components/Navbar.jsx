@@ -24,6 +24,7 @@ import React, { useState } from 'react';
                         <li><a href="#" onClick={closeMenu}>Inicio</a></li>
                         <li><a href="#video" onClick={closeMenu}>Video</a></li>
                         <li><a href="#information" onClick={closeMenu}>Retos</a></li>    
+                        <li><a href="#perfilpro" onClick={closeMenu}>Perfil</a></li>
                         <li><a href="#testimonials"onClick={closeMenu}>Testimonios</a></li>                       
                         <li><a href="#formulario" onClick={closeMenu}>Inscripción</a></li>
                     </ul>
